@@ -1,0 +1,60 @@
+<beans:beans
+	xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+    http://www.springframework.org/schema/security  
+    http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- <http use-expressions="true"> <intercept-url pattern="/login*" access="isAnonymous()" 
+		/> <intercept-url pattern="/**" access="isAuthenticated()" /> <form-login 
+		login-page='/login' default-target-url="/homepage.html" authentication-failure-url="/login.html?error=true" 
+		/> <logout logout-success-url="/login.html" /> </http> -->
+
+	<!-- <http use-expressions="true" auto-config="false"> <intercept-url pattern="/home" 
+		access="hasRole('ADMIN')" /> <form-login login-page="/login" authentication-failure-url="/login?error=" 
+		authentication-success-handler-ref="myAuthenticationSuccessHandler" /> <logout 
+		invalidate-session="true" logout-success-url="/logout" /> </http> -->
+
+	<http use-expressions="true">
+		<intercept-url pattern="/login*" access="isAnonymous()" />
+    	<intercept-url pattern="/**" access="isAuthenticated()"/>
+    	<http-basic />
+		<form-login 
+			authentication-success-handler-ref="myAuthenticationSuccessHandler" />
+		<logout success-handler-ref="customLogoutSuccessHandler" />
+	</http>
+
+	<!-- <authentication-manager> <authentication-provider user-service-ref="customUserDetailsService"> 
+		<password-encoder ref="encoder" /> </authentication-provider> </authentication-manager> -->
+
+	<authentication-manager>
+		<authentication-provider>
+			<user-service>
+				<user name="user1" password="{noop}user1"
+					authorities="ADMIN" />
+				<user name="user2" password="{noop}user2"
+					authorities="ADMIN" />
+				<user name="user3" password="{noop}user3"
+					authorities="ADMIN" />
+			</user-service>
+		</authentication-provider>
+
+	</authentication-manager>
+
+	<beans:bean id="encoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+	</beans:bean>
+
+	<!-- <beans:bean id="customUserDetailsService" class="com.priy.SessionTrackDemoXml.service.CustomUserDetailsService" 
+		/> -->
+
+	<beans:bean id="myAuthenticationSuccessHandler"
+		class="com.priy.SessionTrackDemoXml.service.MySimpleUrlAuthenticationSuccessHandler" />
+
+	<beans:bean id="customLogoutSuccessHandler"
+		class="com.priy.SessionTrackDemoXml.service.MyLogoutSuccessHandler" />
+
+</beans:beans>
+    
